@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/Helper.php';
+require_once __DIR__ . '/Collections.php';
 
 /**
  * A class that abstracts the details of performing CRUD operations
@@ -44,7 +45,7 @@ class Storage {
             throw new Exception("The name of a store must match the following regex: $re");
 
         if (!file_exists($this->fname($name))) {
-            $metaDataRow = $this->arrayToColumns($attributes);
+            $metaDataRow = $this->arrayToColumns(array_merge(['id'], $attributes));
             file_put_contents($this->fname($name), $metaDataRow);
         }
     }
@@ -65,19 +66,46 @@ class Storage {
     public function insertIntoStore($name, $values) {
         $metaDataColumns = $this->getMetaDataForStore($name);
 
-        if (array_count_values($metaDataColumns) != array_count_values(array_keys($values))) {
+        if (array_count_values($metaDataColumns) != array_count_values(array_keys(array_merge(['id' => -1], $values)))) {
             throw new Exception("Not all the attributes were populated.");
         }
 
-        $operationalDataColumns = [];
+        $entries = $this->allInStore($name);
+
+        if (!is_array($entries)) {
+            $entries = [];
+        }
+
+        $ids = Collections::map($entries, function($entry) {
+            return $entry['id'];
+        });
+
+        $id = count($ids) > 0 ? max($ids) + 1: 1;
+
+        $operationalDataColumns = [
+            'id' => $id,
+        ];
 
         foreach ($metaDataColumns as $metaDataColumn) {
+            if ($metaDataColumn == 'id')
+                continue;
             $operationalDataColumns[$metaDataColumn] = $values[$metaDataColumn];
         }
 
         $operationalDataRow = $this->arrayToColumns($operationalDataColumns);
 
         file_put_contents($this->fname($name), "\r\n$operationalDataRow", FILE_APPEND);
+    }
+
+    /**
+     * Searches the store.
+     * @param string $name The name of the store.
+     * @return array Array entries.
+     */
+    public function allInStore($name) {
+        return $this->searchInStore($name, function($entry) {
+            return true;
+        });
     }
 
     /**
@@ -92,13 +120,17 @@ class Storage {
         try {
             $operationalDataRows = $this->getOperationalDataForStore($name);
 
-            $matchingOperationalDataRows = array_filter(array_map(function($operationalDataColumns) use($metaDataColumns) {
+            $makeArg = function($operationalDataColumns) use($metaDataColumns) {
                 $argument = [];
                 foreach ($metaDataColumns as $index => $metaDataColumn) {
                     $argument[$metaDataColumn] = $operationalDataColumns[$index];
                 }
                 return $argument;
-            }, $operationalDataRows), function($argument) use($cb) {
+            };
+
+            $args = Collections::map($operationalDataRows, $makeArg);
+
+            $matchingOperationalDataRows = Collections::filter($args, function($argument) use($cb) {
                 return $cb($argument);
             });
 
@@ -123,7 +155,17 @@ class Storage {
             if (count($operationalDataRows) == 0)
                 return;
 
-            $updatedOperationalDataRows = array_map(function($argument) use($cb, $values) {
+            $makeArg = function($operationalDataColumns) use($metaDataColumns) {
+                $argument = [];
+                foreach ($metaDataColumns as $index => $metaDataColumn) {
+                    $argument[$metaDataColumn] = $operationalDataColumns[$index];
+                }
+                return $argument;
+            };
+
+            $args = Collections::map($operationalDataRows, $makeArg);
+
+            $updatedOperationalDataRows = Collections::map($args, function($argument) use($cb, $values) {
                 if ($cb($argument)) {
                     foreach (array_keys($values) as $key) {
                         if (array_key_exists($key, $argument)) {
@@ -132,13 +174,7 @@ class Storage {
                     }
                 }
                 return $argument;
-            }, array_map(function($operationalDataColumns) use($metaDataColumns) {
-                $argument = [];
-                foreach ($metaDataColumns as $index => $metaDataColumn) {
-                    $argument[$metaDataColumn] = $operationalDataColumns[$index];
-                }
-                return $argument;
-            }, $operationalDataRows));
+            });
 
             $updatedFileContents = $this->arrayToColumns($metaDataColumns);
 
@@ -173,7 +209,8 @@ class Storage {
             if (count($operationalDataRows) == 0)
                 return;
 
-            $updatedOperationalDataRows = array_filter($operationalDataRows, function($operationalDataColumns) use($metaDataColumns, $cb) {
+            $updatedOperationalDataRows = Collections::filter($operationalDataRows,
+                    function($operationalDataColumns) use($metaDataColumns, $cb) {
                 $argument = [];
                 foreach ($metaDataColumns as $index => $metaDataColumn) {
                     $argument[$metaDataColumn] = $operationalDataColumns[$index];
@@ -220,9 +257,9 @@ class Storage {
         if (count($lines) < 2)
             throw new Exception("No operational data in the store.");
 
-        return array_map(function($columnsString) {
+        return Collections::map(array_slice($lines, 1), function($columnsString) {
             return $this->columnsToArray(trim($columnsString));
-        }, array_slice($lines, 1));
+        });
     }
 
     /**
