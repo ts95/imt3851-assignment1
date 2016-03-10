@@ -98,7 +98,7 @@ class Storage {
     }
 
     /**
-     * Searches the store.
+     * Returns all the entries in the store.
      * @param string $name The name of the store.
      * @return array Array entries.
      */
@@ -255,7 +255,7 @@ class Storage {
         $lines = file($this->fname($name));
 
         if (count($lines) < 2)
-            throw new Exception("No operational data in the store.");
+            return [];
 
         return Collections::map(array_slice($lines, 1), function($columnsString) {
             return $this->columnsToArray(trim($columnsString));
