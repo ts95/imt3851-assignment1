@@ -16,12 +16,11 @@ if (!$store->collectionExists('customers')) {
         'person id',
         'address',
         'total assets',
-    ]);
-    $customersCollection->save();
+    ])->save();
 }
 
 if (!$store->collectionExists('accounts')) {
-    $accountsCollection = $store->makeCollection('accounts', [
+    $store->makeCollection('accounts', [
         'account name',
         'account holder',
         'account number',
@@ -29,16 +28,14 @@ if (!$store->collectionExists('accounts')) {
         'balance',
         'withdrawals',
         'deposits',
-    ]);
-    $accountsCollection->save();
+    ])->save();
 }
 
 if (!$store->collectionExists('transactions')) {
-    $transactionsCollection = $store->makeCollection('transactions', [
+    $store->makeCollection('transactions', [
         'type',
         'value',
         'associated account',
         'date',
-    ]);
-    $transactionsCollection->save();
+    ])->save();
 }
