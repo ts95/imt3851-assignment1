@@ -12,47 +12,6 @@ class Collection {
     private $metaRow;
     private $operationalRows;
 
-    /**
-     * Join two collections on a given attribute in each collection and return
-     * the result.
-     *
-     * @param string $rows1 First collection
-     * @param string $rows2 Second collection
-     * @param string $attr1 First attribute name
-     * @param string $attr2 Second attribute name
-     * @param string $newAttr Name of the join attribute that will be returned
-     * @return array
-     */
-    public static function join($rows1, $rows2, $attr1, $attr2, $newAttr = null) {
-        if (is_null($newAttr))
-            $newAttr = $attr1;
-
-        $joinedRows = [];
-
-        foreach ($rows1 as $row1) {
-            foreach ($rows2 as $row2) {
-                if (!isset($row1[$attr1]))
-                    continue;
-                if (!isset($row2[$attr2]))
-                    continue;
-
-                $col1 = $row1[$attr1];
-                $col2 = $row2[$attr2];
-
-                if ($col1 == $col2) {
-                    unset($row1[$attr1]);
-                    unset($row2[$attr2]);
-
-                    $joinedRows[] = array_merge($row1, $row2, [
-                        $newAttr => $col1,
-                    ]);
-                }
-            }
-        }
-
-        return $joinedRows;
-    }
-
     public function __construct($store, $name) {
         $this->store = $store;
         $this->name = $name;
@@ -129,6 +88,19 @@ class Collection {
         }
 
         return $rows[0];
+    }
+
+    public function updateRows($values, $cb) {
+        $this->operationalRows = map($this->operationalRows, function($operationalRow) use($values, $cb) {
+            if ($cb($operationalRow)) {
+                foreach (array_keys($values) as $key) {
+                    if (array_key_exists($key, $operationalRow)) {
+                        $operationalRow[$key] = $values[$key];
+                    }
+                }
+            }
+            return $operationalRow;
+        });
     }
 
     public function removeRows($cb) {

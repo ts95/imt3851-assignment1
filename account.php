@@ -2,6 +2,10 @@
 
 require_once __DIR__ . '/head.php';
 
+$customersCollection = $store->getCollection('customers');
+$accountsCollection = $store->getCollection('accounts');
+$transactionsCollection = $store->getCollection('transactions');
+
 if (!isset($_GET['customer'])) {
     die("Lacking customer GET parameter.");
 }
@@ -25,13 +29,16 @@ $accounts = $accountsCollection->searchRows(function($account) {
 
     <title>Account</title>
 
-    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/public/css/styles.css">
+    <link rel="stylesheet" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/styles.css">
 
-    <script defer src="/public/js/jquery-2.2.1.min.js"></script>
-    <script defer src="/public/js/bootstrap.min.js"></script>
+    <script defer src="public/js/jquery-2.2.1.min.js"></script>
+    <script defer src="public/js/bootstrap.min.js"></script>
+    <script defer src="public/js/script.js"></script>
 </head>
 <body>
+    <?php include __DIR__ . '/navbar.php'; ?>
+
     <div class="container">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -40,9 +47,13 @@ $accounts = $accountsCollection->searchRows(function($account) {
 
                 <?php foreach ($accounts as $account): ?>
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-md-5">
                         <table class="table table-bordered">
                             <tbody>
+                                <tr>
+                                    <th>Account name</th>
+                                    <td><?php echo $account['account name']; ?></td>
+                                </tr>
                                 <tr>
                                     <th>Account number</th>
                                     <td><?php echo $account['account number']; ?></td>
@@ -62,10 +73,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-7">
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>

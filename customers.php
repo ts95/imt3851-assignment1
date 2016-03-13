@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/head.php';
 
+$customersCollection = $store->getCollection('customers');
+$accountsCollection = $store->getCollection('accounts');
+
 $totalCustomers = count($customersCollection->getRows());
 $totalAccounts = count($accountsCollection->getRows());
 
@@ -14,13 +17,16 @@ $customers = $customersCollection->getRows();
 
     <title>Customers</title>
 
-    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/public/css/styles.css">
+    <link rel="stylesheet" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/styles.css">
 
-    <script defer src="/public/js/jquery-2.2.1.min.js"></script>
-    <script defer src="/public/js/bootstrap.min.js"></script>
+    <script defer src="public/js/jquery-2.2.1.min.js"></script>
+    <script defer src="public/js/bootstrap.min.js"></script>
+    <script defer src="public/js/script.js"></script>
 </head>
 <body>
+    <?php include __DIR__ . '/navbar.php'; ?>
+
     <div class="container">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
