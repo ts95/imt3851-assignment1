@@ -1,7 +1,6 @@
 <?php
 
 class Helper {
-
     /**
      * Prints a formatted array to the response.
      * Used for debugging.

@@ -1,23 +1,11 @@
 <?php
 
-require_once __DIR__ . '/classes/Helper.php';
-require_once __DIR__ . '/classes/Storage.php';
+require_once __DIR__ . '/head.php';
 
-$storage = new Storage(__DIR__ . '/data');
-$storage->defineStore('customer', [
-    'first name',
-    'last name',
-    'birthdate',
-    'address',
-    'assets',
-]);
-$storage->defineStore('account', [
-    'account holder',
-    'currency type',
-    'balance',
-    'withdrawals',
-    'deposits',
-]);
+$totalCustomers = count($customersCollection->getRows());
+$totalAccounts = count($accountsCollection->getRows());
+
+$customers = $customersCollection->getRows();
 
 ?>
 <html>
@@ -25,38 +13,69 @@ $storage->defineStore('account', [
     <meta charset="utf-8">
 
     <title>Customers</title>
+
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/styles.css">
+
+    <script defer src="/public/js/jquery-2.2.1.min.js"></script>
+    <script defer src="/public/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>Customers</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h1>Customers</h1>
+                <hr>
 
-    Customers: <?php echo count($storage->allInStore('customer')); ?><br>
-    Accounts: <?php echo count($storage->allInStore('account')); ?><br>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Total customers</th>
+                                    <td><?php echo $totalCustomers; ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Total accounts</th>
+                                    <td><?php echo $totalAccounts; ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    <br>
-
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>First name</th>
-                <th>Last name</th>
-                <th>Birthdate</th>
-                <th>Address</th>
-                <th>Assets</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($storage->allInStore('customer') as $customer): ?>
-            <tr>
-                <td><?php echo $customer['id']; ?></td>
-                <td><?php echo $customer['first name']; ?></td>
-                <td><?php echo $customer['last name']; ?></td>
-                <td><?php echo $customer['birthdate']; ?></td>
-                <td><?php echo $customer['address']; ?></td>
-                <td><?php echo $customer['assets']; ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Surname</th>
+                                        <th>Birthdate</th>
+                                        <th>Person ID</th>
+                                        <th>Address</th>
+                                        <th>Total assets</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($customers as $customer): ?>
+                                    <tr>
+                                        <td><a href="account.php?customer=<?php echo $customer['person id']; ?>"><?php echo $customer['name']; ?></a></td>
+                                        <td><?php echo $customer['surname']; ?></td>
+                                        <td><?php echo $customer['birthdate']; ?></td>
+                                        <td><?php echo $customer['person id']; ?></td>
+                                        <td><?php echo $customer['address']; ?></td>
+                                        <td><?php echo $customer['total assets']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,44 +1,22 @@
 <?php
 
-require_once __DIR__ . '/classes/Helper.php';
-require_once __DIR__ . '/classes/Storage.php';
+require_once __DIR__ . '/head.php';
 
-date_default_timezone_set('CET');
-
-$storage = new Storage(__DIR__ . '/data');
-$storage->defineStore('customer', [
-    'first name',
-    'last name',
-    'birthdate',
-    'address',
-    'assets',
-]);
-$storage->defineStore('account', [
-    'account holder',
-    'currency type',
-    'balance',
-    'withdrawals',
-    'deposits',
-]);
-$storage->defineStore('transaction', [
-    'type',
-    'associated account',
-    'date',
-]);
-
-$selectedAccountID = isset($_GET['account']) ? $_GET['account'] : 1;
-
-$accounts = $storage->allInStore('account');
-
-if (count($accounts) > 0) {
-    $selectedAccount = $storage->searchInStore('account', function($account) use($selectedAccountID) {
-        return $account['id'] == $selectedAccountID;
-    })[0];
-
-    $transactions = $storage->searchInStore('transaction', function($transaction) use($selectedAccountID) {
-        return $transaction['associated account'] == $selectedAccountID;
-    });
+if (!isset($_GET['customer'])) {
+    die("Lacking customer GET parameter.");
 }
+
+$customer = $customersCollection->searchRow(function($customer) {
+    return $customer['person id'] == $_GET['customer'];
+});
+
+if (!$customer) {
+    die("This customer does not exist.");
+}
+
+$accounts = $accountsCollection->searchRows(function($account) {
+    return $account['account holder'] == $_GET['customer'];
+});
 
 ?>
 <html>
@@ -46,53 +24,85 @@ if (count($accounts) > 0) {
     <meta charset="utf-8">
 
     <title>Account</title>
+
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/styles.css">
+
+    <script defer src="/public/js/jquery-2.2.1.min.js"></script>
+    <script defer src="/public/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>Account</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h1>Accounts of <b><?php echo $customer['name']; ?></b></h1>
+                <hr>
 
-    <?php if (count($accounts) == 0): ?>
-        <h3>There are no accounts.</h3>
-    <?php else: ?>
-        <form action="account.php" method="GET">
-            <select name="account">
-            <?php foreach ($accounts as $account): ?>
-                <?php
-                    $id = $account['id'];
-                    $name = $account['account holder'];
-                    $selected = $id == $selectedAccountID ? 'selected' : '';
-                ?>
-                <option <?php echo $selected; ?> value="<?php echo $id; ?>"><?php echo $name; ?></option>
-            <?php endforeach; ?>
-            </select>
-            <input type="submit" value="Change account">
-        </form>
+                <?php foreach ($accounts as $account): ?>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Account number</th>
+                                    <td><?php echo $account['account number']; ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Deposits</th>
+                                    <td><?php echo $account['deposits']; ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Withdrawals</th>
+                                    <td><?php echo $account['withdrawals']; ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Balance</th>
+                                    <td><?php echo $account['balance']; ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-        <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Value</th>
+                                        <th>Associated account</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                $transactions = $transactionsCollection->searchRows(function($transaction) use($account) {
+                                    return $transaction['associated account'] == $account['account number'];
+                                });
+                                ?>
+                                <?php foreach ($transactions as $transaction): ?>
+                                    <tr>
+                                        <td><?php echo $transaction['type']; ?></td>
+                                        <td><?php echo $transaction['value']; ?></td>
+                                        <td><?php echo $transaction['associated account']; ?></td>
+                                        <td><?php echo date('Y-m-d', $transaction['date']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        Withdrawals: <?php echo $selectedAccount['withdrawals']; ?><br>
-        Deposits: <?php echo $selectedAccount['deposits']; ?><br>
-        Balance: <?php echo $selectedAccount['balance']; ?> <?php echo $selectedAccount['currency type']; ?><br>
+                <hr>
 
-        <br>
+                <?php endforeach; ?>
 
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($transactions as $transaction): ?>
-                <tr>
-                    <td><?php echo $transaction['id']; ?></td>
-                    <td><?php echo $transaction['type']; ?></td>
-                    <td><?php echo date('Y-m-d', $transaction['date']); ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
+                <a href="customers.php">← Back to <b>customers</b></a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

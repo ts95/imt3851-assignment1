@@ -1,1 +1,5 @@
-<h3>Not implemented.</h1>
+<?php
+
+require_once __DIR__ . '/head.php';
+
+?>
