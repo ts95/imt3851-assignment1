@@ -45,6 +45,14 @@ if (isset($_POST['form'])) {
             $errors[] = "Invalid person ID (length must be 11 characters long).";
         }
 
+        $customer = $customersCollection->searchRow(function($customer) use($personId) {
+            return $customer['person id'] == $personId;
+        });
+
+        if ($customer) {
+            $errors[] = "This person ID is already in use.";
+        }
+
         if (mb_strlen($address) < 10) {
             $errors[] = "The address must be at least 10 characters long.";
         }
