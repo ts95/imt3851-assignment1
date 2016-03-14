@@ -27,7 +27,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
 <head>
     <meta charset="utf-8">
 
-    <title>Account</title>
+    <title>Bank – Account</title>
 
     <link rel="stylesheet" href="public/css/bootstrap.min.css">
     <link rel="stylesheet" href="public/css/styles.css">
@@ -44,6 +44,10 @@ $accounts = $accountsCollection->searchRows(function($account) {
             <div class="col-md-10 col-md-offset-1">
                 <h1>Accounts of <b><?php echo $customer['name']; ?></b></h1>
                 <hr>
+
+                <?php if (count($accounts) == 0): ?>
+                <p>This customer has no accounts. New accounts can be created <a href="data.php#new-account">here</a>.</p>
+                <?php endif; ?>
 
                 <?php foreach ($accounts as $account): ?>
                 <div class="row">
@@ -68,7 +72,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
                                 </tr>
                                 <tr>
                                     <th>Balance</th>
-                                    <td><?php echo $account['balance']; ?></td>
+                                    <td><?php echo $account['balance'] . ' ' . $account['currency type']; ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -95,7 +99,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
                                         <td><?php echo $transaction['type']; ?></td>
                                         <td><?php echo $transaction['value']; ?></td>
                                         <td><?php echo $transaction['associated account']; ?></td>
-                                        <td><?php echo date('Y-m-d', $transaction['date']); ?></td>
+                                        <td><?php echo date('Y/m/d', $transaction['date']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>

@@ -15,7 +15,7 @@ $customers = $customersCollection->getRows();
 <head>
     <meta charset="utf-8">
 
-    <title>Customers</title>
+    <title>Bank – Customers</title>
 
     <link rel="stylesheet" href="public/css/bootstrap.min.css">
     <link rel="stylesheet" href="public/css/styles.css">

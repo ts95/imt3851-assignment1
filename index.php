@@ -1,3 +1,3 @@
 <?php
 
-header('Location: /customers.php');
+header('Location: customers.php');
