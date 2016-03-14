@@ -22,6 +22,13 @@ function cconv($value, $from, $to) {
     return $conversionRates["$from -> $to"] * $value;
 }
 
+/**
+ * Formats the number.
+ */
+function bankNumber($n) {
+    return number_format($n, 2, '.', ' ');
+}
+
 $store = new \Store\Store(__DIR__ . '/data');
 
 if (!$store->collectionExists('customers')) {

@@ -72,7 +72,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
                                 </tr>
                                 <tr>
                                     <th>Balance</th>
-                                    <td><?php echo $account['balance'] . ' ' . $account['currency type']; ?></td>
+                                    <td><?php echo bankNumber($account['balance']) . ' ' . $account['currency type']; ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -98,7 +98,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
                                 <?php foreach ($transactions as $transaction): ?>
                                     <tr>
                                         <td><?php echo $transaction['type']; ?></td>
-                                        <td><?php echo $transaction['value']; ?></td>
+                                        <td><?php echo bankNumber($transaction['value']); ?></td>
                                         <td><?php echo $transaction['associated account']; ?></td>
                                         <td><?php echo date('Y/m/d', $transaction['date']); ?></td>
                                     </tr>
