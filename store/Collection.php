@@ -4,8 +4,8 @@ namespace Store;
 require_once __DIR__ . '/../misc/functions.php';
 
 /**
- * A collection is a class that makes it easy to read and write
- * from CSV files.
+ * A collection is a class that makes it easy
+ * to read from and write to CSV files.
  */
 class Collection {
 
