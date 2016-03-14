@@ -72,7 +72,7 @@ $customers = $customersCollection->getRows();
                                         <td><?php echo $customer['birthdate']; ?></td>
                                         <td><?php echo $customer['person id']; ?></td>
                                         <td><?php echo $customer['address']; ?></td>
-                                        <td><?php echo $customer['total assets']; ?></td>
+                                        <td><?php echo $customer['total assets'] . ' USD'; ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>

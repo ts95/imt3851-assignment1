@@ -6,14 +6,6 @@ $customersCollection = $store->getCollection('customers');
 $accountsCollection = $store->getCollection('accounts');
 $transactionsCollection = $store->getCollection('transactions');
 
-$supportedCurrencyTypes = ['USD', 'EUR'];
-
-// 14th of March 2016
-$conversionRates = [
-    'USD -> EUR' => 0.899118864,
-    'EUR -> USD' => 1.1122,
-];
-
 if (isset($_POST['form'])) {
     $form = $_POST['form'];
 
@@ -140,9 +132,6 @@ if (isset($_POST['form'])) {
         if ($value == 0)
             $errors[] = "The transaction value can't be 0 (zero).";
 
-        if ($value > pow(10, 9) || $value < (-1 * pow(10, 9)))
-            $errors[] = "Invalid value.";
-
         $account = $accountsCollection->searchRow(function($account) use($number) {
             return $account['account number'] == $number;
         });
@@ -183,7 +172,10 @@ if (isset($_POST['form'])) {
             return $customer['person id'] == $account['account holder'];
         });
 
-        $customersCollection->updateRows(['total assets' => $customer['total assets'] + $value], function($customer) use($account) {
+        $newTotalAssets = 'USD' == $account['currency type'] ?
+            $customer['total assets'] + $value : $customer['total assets'] + cconv($value, $account['currency type'], 'USD');
+
+        $customersCollection->updateRows(['total assets' => $newTotalAssets], function($customer) use($account) {
             return $customer['person id'] == $account['account holder'];
         });
         $customersCollection->save();

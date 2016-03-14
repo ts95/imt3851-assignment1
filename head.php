@@ -6,6 +6,22 @@ require_once __DIR__ . '/store/Collection.php';
 
 date_default_timezone_set('CET');
 
+$supportedCurrencyTypes = ['USD', 'EUR'];
+
+// 14th of March 2016
+$conversionRates = [
+    'USD -> EUR' => 0.899118864,
+    'EUR -> USD' => 1.1122,
+];
+
+/**
+ * Convert currency
+ */
+function cconv($value, $from, $to) {
+    global $conversionRates;
+    return $conversionRates["$from -> $to"] * $value;
+}
+
 $store = new \Store\Store(__DIR__ . '/data');
 
 if (!$store->collectionExists('customers')) {
