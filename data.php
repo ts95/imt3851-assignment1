@@ -124,6 +124,9 @@ if (isset($_POST['form'])) {
         $value = (double)$_POST['value'];
         $number = $_POST['account-number'];
 
+        if ($type == 'withdrawal')
+            $value *= -1;
+
         $errors = [];
 
         if (!in_array($type, ['deposit', 'withdrawal']))
@@ -145,7 +148,7 @@ if (isset($_POST['form'])) {
 
         $transactionsCollection->addRow([
             'type' => $type,
-            'value' => $value,
+            'value' => abs($value),
             'associated account' => $number,
             'date' => time(),
         ]);
@@ -183,7 +186,6 @@ if (isset($_POST['form'])) {
         header('Location: account.php?customer=' . $account['account holder']);
     }
 }
-
 ?>
 <html>
 <head>

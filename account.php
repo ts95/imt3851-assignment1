@@ -76,6 +76,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
                                 </tr>
                             </tbody>
                         </table>
+                        <a class="btn btn-default" href="data.php#new-transaction">Add transaction</a>
                     </div>
                     <div class="col-md-7">
                         <div class="table-responsive">
