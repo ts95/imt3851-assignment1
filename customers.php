@@ -22,6 +22,7 @@ $customers = $customersCollection->getRows();
 
     <script defer src="public/js/jquery-2.2.1.min.js"></script>
     <script defer src="public/js/bootstrap.min.js"></script>
+    <script defer src="public/js/jquery.tablesorter.min.js"></script>
     <script defer src="public/js/script.js"></script>
 </head>
 <body>
@@ -53,7 +54,7 @@ $customers = $customersCollection->getRows();
                 <div class="row">
                     <div class="col-md-12">
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered tablesorter">
                                 <thead>
                                     <tr>
                                         <th>Name</th>

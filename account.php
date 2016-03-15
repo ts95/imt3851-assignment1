@@ -34,6 +34,7 @@ $accounts = $accountsCollection->searchRows(function($account) {
 
     <script defer src="public/js/jquery-2.2.1.min.js"></script>
     <script defer src="public/js/bootstrap.min.js"></script>
+    <script defer src="public/js/jquery.tablesorter.min.js"></script>
     <script defer src="public/js/script.js"></script>
 </head>
 <body>
@@ -80,12 +81,11 @@ $accounts = $accountsCollection->searchRows(function($account) {
                     </div>
                     <div class="col-md-7">
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered tablesorter">
                                 <thead>
                                     <tr>
                                         <th>Type</th>
                                         <th>Value</th>
-                                        <th>Associated account</th>
                                         <th>Date</th>
                                     </tr>
                                 </thead>
@@ -99,7 +99,6 @@ $accounts = $accountsCollection->searchRows(function($account) {
                                     <tr>
                                         <td><?php echo $transaction['type']; ?></td>
                                         <td><?php echo bankNumber($transaction['value']); ?></td>
-                                        <td><?php echo $transaction['associated account']; ?></td>
                                         <td><?php echo date('Y/m/d', $transaction['date']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
