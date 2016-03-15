@@ -184,14 +184,17 @@ if (isset($_POST['form'])) {
         });
 
         $newTotalAssets = 'USD' == $account['currency type'] ?
-            $customer['total assets'] + $value : $customer['total assets'] + cconv($value, $account['currency type'], 'USD');
+            $customer['total assets'] + $value :
+            $customer['total assets'] + cconv($value, $account['currency type'], 'USD');
 
         $customersCollection->updateRows(['total assets' => $newTotalAssets], function($customer) use($account) {
             return $customer['person id'] == $account['account holder'];
         });
         $customersCollection->save();
 
-        header('Location: account.php?customer=' . $account['account holder']);
+        $holder = $account['account holder'];
+
+        header("Location: account.php?customer=$holder");
     }
 }
 ?>
@@ -326,14 +329,14 @@ if (isset($_POST['form'])) {
                         <select name="account-number" class="form-control">
                         <?php foreach ($customersCollection->getRows() as $customer): ?>
                             <optgroup label="<?php echo $customer['name'] . ' ' . $customer['surname']; ?>">
-                                <?php
-                                $accounts = $accountsCollection->searchRows(function($account) use($customer) {
-                                    return $account['account holder'] == $customer['person id'];
-                                });
-                                ?>
-                                <?php foreach ($accounts as $account): ?>
+                            <?php
+                            $accounts = $accountsCollection->searchRows(function($account) use($customer) {
+                                return $account['account holder'] == $customer['person id'];
+                            });
+                            ?>
+                            <?php foreach ($accounts as $account): ?>
                                 <option value="<?php echo $account['account number']; ?>"><?php echo $account['account number']; ?></option>
-                                <?php endforeach; ?>
+                            <?php endforeach; ?>
                             </optgroup>
                         <?php endforeach; ?>
                         </select>

@@ -162,7 +162,6 @@ class Collection {
 
     /**
      * Removes rows in the store.
-     * @param array $values Values that overwrite the current values in the collection.
      * @param function $cb Callback. A row is passed to it as its first parameter.
      */
     public function removeRows($cb) {
