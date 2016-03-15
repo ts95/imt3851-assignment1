@@ -6,6 +6,12 @@ body {
     margin: 0 0 10px 0;
 }
 
+@media (max-width: 992px) {
+    div[class*=col] {
+        margin-bottom: 20px;
+    }
+}
+
 /* CSS for table sorter */
 
 table.tablesorter thead tr .header {
